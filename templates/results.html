@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube Scraper Results</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles_results.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Scraped Videos</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Title</th>
+                    <th>Link</th>
+                    <th>Channel</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for result in results %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ result['title'] }}</strong></td>
+                    <td><a href="{{ result['link'] }}" target="_blank">Watch Video</a></td>
+                    <td><a href="{{ result['channel'] }}" target="_blank">Visit Channel</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="button-container">
+            <a href="/">New Search</a>
+        </div>
+    </div>
+</body>
+</html>
