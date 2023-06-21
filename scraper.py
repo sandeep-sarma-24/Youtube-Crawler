@@ -1,4 +1,3 @@
-
 from selenium import webdriver
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.common.by import By
@@ -59,7 +58,7 @@ def scrape_data(limit, proxies_to_use, search_query):
         options = webdriver.ChromeOptions()
         options.add_argument('--proxy-server=%s' % proxy.http_proxy)
         options.add_argument('--proxy-server=%s' % proxy.http_proxy)
-        options.add_argument('--headless') # This line enables headless mode
+        #options.add_argument('--headless') # This line enables headless mode
         driver = webdriver.Chrome(options=options)
 
         try:
@@ -73,13 +72,6 @@ def scrape_data(limit, proxies_to_use, search_query):
 
             # Keep scrolling and scraping until the limit is reached
             while count < limit:
-                # Scroll down to the bottom of the page
-                driver.execute_script(
-                    "window.scrollTo(0, document.documentElement.scrollHeight);")
-                # Wait for new videos to load
-                wait.until(EC.presence_of_all_elements_located(
-                    (By.CSS_SELECTOR, "ytd-video-renderer")))
-
                 # Find all the video elements on the page
                 video_elements = driver.find_elements(
                     By.CSS_SELECTOR, "ytd-video-renderer")
@@ -87,8 +79,8 @@ def scrape_data(limit, proxies_to_use, search_query):
                 # Loop through each video element and extract the link, title, and channel
                 for video_element in video_elements:
                     # Extract the video link
-                    v_link = video_element.find_element(
-                        By.CSS_SELECTOR, "a.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail").get_attribute('href')
+                    v_link = video_element.find_element(By.CSS_SELECTOR, "a.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail").get_attribute('href')
+                
                     # Extract the video title
                     v_title = video_element.find_element(
                         By.CSS_SELECTOR, "#video-title").text
@@ -106,17 +98,20 @@ def scrape_data(limit, proxies_to_use, search_query):
                     if count >= limit:
                         break
 
-                # Scroll down again to load more videos
+                # Scroll down to load more videos
                 driver.execute_script(
                     "window.scrollTo(0, document.documentElement.scrollHeight);")
+                # Wait for new videos to load
+                time.sleep(1)
 
             # Print a success message
             print(f"Successful to connect to proxy server: {proxy_address}")
             driver.quit()
-            # Convert dataframe to list of dictionaries
-            return df.to_dict('records')
+            
         except Exception as e:
             print(f"Failed to connect to proxy server: {proxy_address}")
             print(f"Error message: {str(e)}")
             driver.quit()
             continue
+        # Convert dataframe to list of dictionaries
+    return df.to_dict('records')
